@@ -70,7 +70,7 @@ console.log(headerNav)
 
 const fixedHeader = function (entries, obs) {
     const [entry] = entries;
-    
+
 
     if (!entry.isIntersecting) {
         header.classList.add('fixed');
@@ -87,4 +87,72 @@ const headerObs = new IntersectionObserver(fixedHeader, {
 })
 
 headerObs.observe(section);
+
+// Slider functionality
+
+const slides = document.querySelectorAll('.slide');
+const btnRight = document.querySelector('.slider__btn--right');
+const btnLeft = document.querySelector('.slider__btn--left');
+const dots = document.querySelectorAll('.dots__dot');
+const dotsContainer = document.querySelector('.dots');
+
+let currentSlide = 0;
+let maxSlider = slides.length - 1;
+
+const activeDot = function(slide){
+    dots.forEach(dot => {
+        dot.classList.remove('active');
+    })
+    document.querySelector(`.dots__dot[data-slide="${slide}"]`).classList.add('active');
+
+}
+
+const goToSlide = function (slide) {
+    slides.forEach((s, i) => {
+        s.style.transform = `translateX(${200 * (i - slide)}%)`
+    })
+
+}
+goToSlide(currentSlide);
+
+const next = function () {
+    if (currentSlide === maxSlider) {
+        currentSlide = 0;
+    } else {
+        currentSlide++;
+    }
+
+    goToSlide(currentSlide);
+    activeDot(currentSlide);
+}
+const prev = function () {
+    if (currentSlide === 0) {
+        currentSlide = maxSlider;
+    } else {
+        currentSlide--;
+    }
+    goToSlide(currentSlide);
+    activeDot(currentSlide);
+}
+
+// event listeners
+btnRight.addEventListener('click', next)
+
+btnLeft.addEventListener('click', prev)
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') next();
+    e.key === 'ArrowLeft' && prev();
+
+})
+
+dotsContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+        const slide = e.target.dataset.slide;
+        // e.target.classList.toggle('active');
+        goToSlide(slide);
+        activeDot(slide);
+    }
+})
+
 
